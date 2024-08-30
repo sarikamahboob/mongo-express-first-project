@@ -7,14 +7,14 @@ export default [
   {
     files: ["**/*.{js,mjs,cjs,ts}"]
   },
-  {
-    extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
-  },
+  // {
+  //   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  // },
   {
     languageOptions: {
-      globals:
-        { process: "readonly" },
-    }
+      globals: globals.node,
+      parser: "@typescript-eslint/parser",
+    },
   },
   {
     rules: {
@@ -24,9 +24,6 @@ export default [
       "no-console": "warn",
       "no-undefined": "error",
     },
-    // globals: {
-    //   process: "readonly"
-    // }
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
