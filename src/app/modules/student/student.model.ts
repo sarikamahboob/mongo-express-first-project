@@ -1,10 +1,30 @@
 import { Schema, model } from 'mongoose'
 import { Guardian, LocalGuardian, Student, UserName } from './student.interface'
+import validator from 'validator'
 
 const userNameSchema = new Schema<UserName>({
-  firstName: { type: String, required: true },
+  firstName: {
+    type: String,
+    required: [true, 'first name is required'],
+    trim: true,
+    maxlength: [20, 'first name can not be more than 20'],
+    validate: {
+      validator: function (value: string) {
+        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1)
+        return firstNameStr === value
+      },
+      message: `{VALUE} is not in capitalize format`,
+    },
+  },
   middleName: { type: String },
-  lastName: { type: String, required: true },
+  lastName: {
+    type: String,
+    required: [true, 'last name is required'],
+    validate: {
+      validator: (value: string) => validator.isAlpha(value),
+      message: `{VALUE} is not valid`,
+    },
+  },
 })
 
 const guardianSchema = new Schema<Guardian>({
@@ -24,20 +44,42 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 })
 
 const studentSchema = new Schema<Student>({
-  id: { type: String },
-  name: userNameSchema,
-  gender: ['male', 'female'],
+  id: { type: String, unique: true, required: true },
+  name: { type: userNameSchema, required: true },
+  gender: {
+    type: String,
+    enum: {
+      values: ['male', 'female', 'other'],
+      message:
+        "{VALUE} is not valid. The gender field can only be of the following: 'male', 'female', 'other'",
+    },
+    required: true,
+  },
   dateOfBirth: { type: String },
-  email: { type: String, required: true },
+  email: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (value: string) => validator.isEmail(value),
+      message: '{VALUE} is not a valid email',
+    }
+  },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
-  bloodGroup: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B+', 'O+', 'O-'],
+  bloodGroup: {
+    type: String,
+    enum: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B+', 'O+', 'O-'],
+  },
   presentAddress: { type: String, required: true },
   permanentAddress: { type: String, required: true },
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
+  guardian: { type: guardianSchema, required: true },
+  localGuardian: { type: localGuardianSchema, required: true },
   profileImage: { type: String },
-  isActive: ['active', 'blocked'],
+  isActive: {
+    type: String,
+    enum: ['active', 'blocked'],
+    default: 'active',
+  },
 })
 
 export const StudentModel = model<Student>('Student', studentSchema)
