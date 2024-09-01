@@ -1,5 +1,11 @@
 import { Schema, model } from 'mongoose'
-import {  StudentModel, StudentMethod, TGuardian, TLocalGuardian, TUserName, TStudent,} from './student.interface'
+import {
+  StudentModel,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  TUserName,
+} from './student.interface'
 import validator from 'validator'
 
 const userNameSchema = new Schema<TUserName>({
@@ -82,7 +88,57 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 //   },
 // })
 
-const studentSchema = new Schema<TStudent, StudentModel, StudentMethod>({
+// export const StudentModel = model<Student>('Student', studentSchema)
+
+/***creating a custom instance method ***/
+
+// const studentSchema = new Schema<TStudent, StudentModel, StudentMethod>({
+//   id: { type: String, unique: true, required: true },
+//   name: { type: userNameSchema, required: true },
+//   gender: {
+//     type: String,
+//     enum: {
+//       values: ['male', 'female', 'other'],
+//       message:
+//         "{VALUE} is not valid. The gender field can only be of the following: 'male', 'female', 'other'",
+//     },
+//     required: true,
+//   },
+//   dateOfBirth: { type: String },
+//   email: {
+//     type: String,
+//     required: true,
+//     validate: {
+//       validator: (value: string) => validator.isEmail(value),
+//       message: '{VALUE} is not a valid email',
+//     }
+//   },
+//   contactNo: { type: String, required: true },
+//   emergencyContactNo: { type: String, required: true },
+//   bloodGroup: {
+//     type: String,
+//     enum: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B+', 'O+', 'O-'],
+//   },
+//   presentAddress: { type: String, required: true },
+//   permanentAddress: { type: String, required: true },
+//   guardian: { type: guardianSchema, required: true },
+//   localGuardian: { type: localGuardianSchema, required: true },
+//   profileImage: { type: String },
+//   isActive: {
+//     type: String,
+//     enum: ['active', 'blocked'],
+//     default: 'active',
+//   },
+// })
+
+// studentSchema.methods.isUserExist = async (id: string) => {
+//   const existingUser = await Student.findOne({id});
+//   return existingUser;
+// }
+// export const Student = model<TStudent, StudentModel>('Student', studentSchema)
+
+/***creating a custom static method ***/
+const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, unique: true, required: true },
   name: { type: userNameSchema, required: true },
   gender: {
@@ -101,7 +157,7 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethod>({
     validate: {
       validator: (value: string) => validator.isEmail(value),
       message: '{VALUE} is not a valid email',
-    }
+    },
   },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
@@ -120,11 +176,9 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethod>({
     default: 'active',
   },
 })
-
-// export const StudentModel = model<Student>('Student', studentSchema)
-
-studentSchema.methods.isUserExist = async (id: string) => {
-  const existingUser = await Student.findOne({id});
-  return existingUser;
+studentSchema.statics.isUserExist = async function (id: string) {
+  const existingUser = await Student.findOne({ id })
+  return existingUser
 }
+
 export const Student = model<TStudent, StudentModel>('Student', studentSchema)
