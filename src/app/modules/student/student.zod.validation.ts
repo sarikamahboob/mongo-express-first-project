@@ -55,6 +55,7 @@ const studentValidationSchema = z.object({
   id: z
     .string()
     .min(1, { message: 'ID is required' }),
+  password: z.string().min(1, { message: 'Password is required' }).max(20, { message: 'Password cannot be more than 20 characters' }),
   name: userNameValidationSchema,
   gender: z.enum(['male', 'female', 'other'], {
     errorMap: () => ({
@@ -95,6 +96,7 @@ const studentValidationSchema = z.object({
       message: "Status must be either 'active' or 'blocked'",
     }),
   }),
+  isDeleted: z.boolean(),
 })
 
 export default studentValidationSchema
