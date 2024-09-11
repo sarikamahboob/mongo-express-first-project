@@ -143,6 +143,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 /***creating a custom static method ***/
 const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, unique: true, required: [true, 'ID is required'] },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User ID is required'],
+    unique: true,
+    ref: 'User'
+  },
   password: { type: String, required: [true, 'password is required'], maxlength: [20, 'password cannot be more than 20 characters'] },
   name: { type: userNameSchema, required: true },
   gender: {
@@ -174,14 +180,6 @@ const studentSchema = new Schema<TStudent, StudentModel>({
   guardian: { type: guardianSchema, required: true },
   localGuardian: { type: localGuardianSchema, required: true },
   profileImage: { type: String },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'blocked'],
-      message: '{VALUE} is active'
-    },
-    default: 'active',
-  },
   isDeleted: {
     type: Boolean,
     default: false,

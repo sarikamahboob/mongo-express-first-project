@@ -21,7 +21,7 @@ const deleteStudentFromDB = async (id: string) => {
   return result
 }
 
-const updateSingleStudentFromDB = async (id: string, data:any) => {
+const updateSingleStudentFromDB = async (id: string, data: any) => {
   const result = await Student.updateOne(
     { id },
     data
