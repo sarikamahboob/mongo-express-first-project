@@ -8,8 +8,6 @@ import {
   TUserName,
 } from './student.interface'
 import validator from 'validator'
-import bcrypt from "bcrypt";
-import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -149,7 +147,6 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     unique: true,
     ref: 'User'
   },
-  password: { type: String, required: [true, 'password is required'], maxlength: [20, 'password cannot be more than 20 characters'] },
   name: { type: userNameSchema, required: true },
   gender: {
     type: String,
@@ -198,19 +195,19 @@ studentSchema.virtual('fullName').get(function () {
 /*** document middleware ***/ 
 // pre save middleware/hook
 // will work on create() and save()
-studentSchema.pre('save', async function(next) {
-  // hashing password and save into database
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds))
-  next()
-})
+// studentSchema.pre('save', async function(next) {
+//   // hashing password and save into database
+//   // eslint-disable-next-line @typescript-eslint/no-this-alias
+//   const user = this
+//   user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds))
+//   next()
+// })
 
-// post save middleware/hook
-studentSchema.post('save', function(doc,next) {
-  doc.password = ''
-  next()
-})
+// // post save middleware/hook
+// studentSchema.post('save', function(doc,next) {
+//   doc.password = ''
+//   next()
+// })
 
 /*** query middleware ***/
 studentSchema.pre('find', function(next) {

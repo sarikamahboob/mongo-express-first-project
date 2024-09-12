@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { StudentServices } from './student.service'
 import studentValidationSchema from './student.zod.validation'
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB()
     res.status(200).json({
@@ -11,16 +11,12 @@ const getAllStudents = async (req: Request, res: Response) => {
       message: 'students are fetched successfully',
       data: result,
     })
-  } catch (error:any) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || 'student data is not created!',
-      error: error,
-    })
+  } catch (error) {
+    next(error)
   }
 }
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params
     const result = await StudentServices.getSingleStudentFromDB(studentId)
@@ -29,16 +25,12 @@ const getSingleStudent = async (req: Request, res: Response) => {
       message: 'students is retrieved successfully',
       data: result,
     })
-  } catch (error:any) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || 'student data is not created!',
-      error: error,
-    })
+  } catch (error) {
+    next(error)
   }
 }
 
-const deleteStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params
     const result = await StudentServices.deleteStudentFromDB(studentId)
@@ -47,16 +39,12 @@ const deleteStudent = async (req: Request, res: Response) => {
       message: 'students is deleted successfully',
       data: result,
     })
-  } catch (error:any) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || 'student data is not created!',
-      error: error,
-    })
+  } catch (error) {
+    next(error)
   }
 }
 
-const updateSingleStudent = async (req: Request, res: Response) => {
+const updateSingleStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const studentData = req.body
     // Partial validation using zod
@@ -68,12 +56,8 @@ const updateSingleStudent = async (req: Request, res: Response) => {
       message: 'students is updated successfully',
       data: result,
     })
-  } catch (error:any) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || 'student data is not created!',
-      error: error,
-    })
+  } catch (error) {
+    next(error)
   }
 }
 
