@@ -51,52 +51,53 @@ const localGuardianValidationSchema = z.object({
 })
 
 // Student schema
-const studentValidationSchema = z.object({
-  id: z
-    .string()
-    .min(1, { message: 'ID is required' }),
-  password: z.string().min(1, { message: 'Password is required' }).max(20, { message: 'Password cannot be more than 20 characters' }),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female', 'other'], {
-    errorMap: () => ({
-      message: "The gender field can only be 'male', 'female', or 'other'",
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z
+      .string()
+      .min(1, { message: 'Password is required' })
+      .max(20, { message: 'Password cannot be more than 20 characters' }),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female', 'other'], {
+        errorMap: () => ({
+          message: "The gender field can only be 'male', 'female', or 'other'",
+        }),
+      }),
+      dateOfBirth: z
+        .string()
+        .optional()
+        .refine((value) => !value || /^\d{4}-\d{2}-\d{2}$/.test(value), {
+          message: 'Invalid date of birth format',
+        }),
+      email: z
+        .string()
+        .email({ message: 'Invalid email format' })
+        .min(1, { message: 'Email is required' }),
+      contactNo: z
+        .string()
+        .min(10, { message: 'Contact number must have at least 10 digits' }),
+      emergencyContactNo: z.string().min(10, {
+        message: 'Emergency contact number must have at least 10 digits',
+      }),
+      bloodGroup: z.enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'O+', 'O-'], {
+        errorMap: () => ({
+          message:
+            "Invalid blood group. It must be one of 'A+', 'A-', 'AB+', 'AB-', 'B+', 'O+', 'O-'",
+        }),
+      }),
+      presentAddress: z
+        .string()
+        .min(1, { message: 'Present address is required' }),
+      permanentAddress: z
+        .string()
+        .min(1, { message: 'Permanent address is required' }),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImage: z.string().optional(),
     }),
   }),
-  dateOfBirth: z
-    .string()
-    .optional()
-    .refine((value) => !value || /^\d{4}-\d{2}-\d{2}$/.test(value), {
-      message: 'Invalid date of birth format',
-    }),
-  email: z
-    .string()
-    .email({ message: 'Invalid email format' })
-    .min(1, { message: 'Email is required' }),
-  contactNo: z
-    .string()
-    .min(10, { message: 'Contact number must have at least 10 digits' }),
-  emergencyContactNo: z.string().min(10, {
-    message: 'Emergency contact number must have at least 10 digits',
-  }),
-  bloodGroup: z.enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'O+', 'O-'], {
-    errorMap: () => ({
-      message:
-        "Invalid blood group. It must be one of 'A+', 'A-', 'AB+', 'AB-', 'B+', 'O+', 'O-'",
-    }),
-  }),
-  presentAddress: z.string().min(1, { message: 'Present address is required' }),
-  permanentAddress: z
-    .string()
-    .min(1, { message: 'Permanent address is required' }),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImage: z.string().optional(),
-  isActive: z.enum(['active', 'blocked'], {
-    errorMap: () => ({
-      message: "Status must be either 'active' or 'blocked'",
-    }),
-  }),
-  isDeleted: z.boolean(),
 })
-
-export default studentValidationSchema
+export const StudentValidations = {
+  createStudentValidationSchema
+}
