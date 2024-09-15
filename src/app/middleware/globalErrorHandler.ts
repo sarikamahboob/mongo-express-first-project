@@ -8,7 +8,7 @@ const globalErrorHandler = (err: any, req:Request, res: Response, next: NextFunc
   return res.status(statusCode).json({ 
     success: false,
     message,
-    error: err
+    error: err.message || err
   })
 }
 
