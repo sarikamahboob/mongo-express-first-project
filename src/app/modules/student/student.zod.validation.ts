@@ -63,11 +63,8 @@ const studentValidationSchema = z.object({
     }),
   }),
   dateOfBirth: z
-    .string()
-    .optional()
-    .refine((value) => !value || /^\d{4}-\d{2}-\d{2}$/.test(value), {
-      message: 'Invalid date of birth format',
-    }),
+    .date()
+    .optional(),
   email: z
     .string()
     .email({ message: 'Invalid email format' })
@@ -91,11 +88,6 @@ const studentValidationSchema = z.object({
   guardian: guardianValidationSchema,
   localGuardian: localGuardianValidationSchema,
   profileImage: z.string().optional(),
-  isActive: z.enum(['active', 'blocked'], {
-    errorMap: () => ({
-      message: "Status must be either 'active' or 'blocked'",
-    }),
-  }),
   isDeleted: z.boolean(),
 })
 
