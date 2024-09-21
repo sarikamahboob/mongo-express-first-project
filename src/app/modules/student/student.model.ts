@@ -139,57 +139,64 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 // export const Student = model<TStudent, StudentModel>('Student', studentSchema)
 
 /***creating a custom static method ***/
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, unique: true, required: [true, 'ID is required'] },
-  user: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User ID is required'],
-    unique: true,
-    ref: 'User'
-  },
-  name: { type: userNameSchema, required: true },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'other'],
-      message:
-        "{VALUE} is not valid. The gender field can only be of the following: 'male', 'female', 'other'",
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: { type: String, unique: true, required: [true, 'ID is required'] },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User ID is required'],
+      unique: true,
+      ref: 'User',
     },
-    required: true,
-  },
-  dateOfBirth: { type: String },
-  email: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid email',
+    name: { type: userNameSchema, required: true },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message:
+          "{VALUE} is not valid. The gender field can only be of the following: 'male', 'female', 'other'",
+      },
+      required: true,
+    },
+    dateOfBirth: { type: String },
+    email: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is not a valid email',
+      },
+    },
+    contactNo: { type: String, required: true },
+    emergencyContactNo: { type: String, required: true },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B+', 'O+', 'O-'],
+    },
+    presentAddress: { type: String, required: true },
+    permanentAddress: { type: String, required: true },
+    guardian: { type: guardianSchema, required: true },
+    localGuardian: { type: localGuardianSchema, required: true },
+    profileImage: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  contactNo: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B+', 'O+', 'O-'],
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  presentAddress: { type: String, required: true },
-  permanentAddress: { type: String, required: true },
-  guardian: { type: guardianSchema, required: true },
-  localGuardian: { type: localGuardianSchema, required: true },
-  profileImage: { type: String },
-  admissionSemester: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicSemester'
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-},{
-  toJSON: {
-    virtuals: true
-  }
-})
+)
 
 /*** mongoose virtual ***/ 
 studentSchema.virtual('fullName').get(function () {
