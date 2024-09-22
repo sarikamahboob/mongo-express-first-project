@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import {  NextFunction, Request,Response, RequestHandler } from 'express'
 import { StudentServices } from './student.service'
-import studentValidationSchema from './student.zod.validation'
 import sendResponse from '../../utils/sendResponse'
 import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
@@ -40,15 +39,11 @@ const deleteStudent = catchAsync(async (req, res, next) => {
 })
 
 const updateSingleStudent = catchAsync(async (req, res, next) => {
-    const studentData = req.body
-    // Partial validation using zod
-    const zodParseData: any = studentValidationSchema
-      .partial()
-      .parse(studentData)
+    const { student } = req.body
     const { studentId } = req.params
-    const result = await StudentServices.updateSingleStudentFromDB(
+    const result = await StudentServices.updateSingleStudentIntoDB(
       studentId,
-      zodParseData,
+      student,
     )
     sendResponse(res, {
       statusCode: httpStatus.OK,
